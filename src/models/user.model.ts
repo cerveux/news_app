@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType } from "sequelize-typescript";
+import { Table, Column, Model, DataType, Index } from "sequelize-typescript";
 import { UserAttributes } from "../interfaces/user.interface";
 // import { GroupModel, SectionModel } from "./index";
 
@@ -6,10 +6,11 @@ import { UserAttributes } from "../interfaces/user.interface";
 @Table( { tableName: "user" } )
 class UserModel extends Model<UserAttributes> {
 
+@Index
 @Column( {
   type: DataType.STRING( 15 ),
   allowNull: false,
-  unique: true
+  unique: true,
 } )
   declare username: string;
 

@@ -11,7 +11,7 @@ import { UserModel } from "../index";
 export const createUser = async ( user: UserAttributes ):Promise<ResponseAttributes> => {
   await UserModel.create( user );
   return {
-    code: 200,
+    code: 201,
     message: "New User registered successfully." };
 };
 

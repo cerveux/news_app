@@ -9,7 +9,7 @@ const name: ValidationChain = body( "name" ).isAlpha( "es-ES" ).withMessage( "On
   .customSanitizer( capitalizeFirstLetter ).optional();
 
 const username: ValidationChain = body( "username" ).isAlpha( "es-ES" ).withMessage( "Only letters are allowed" ).trim()
-  .isLength( { min: 3, max: 15 } ).withMessage( "The name's length should be between 3 and 15 characters." ).optional();
+  .isLength( { min: 3, max: 15 } ).withMessage( "The username length should be between 3 and 15 characters." ).optional();
 
 const lastName: ValidationChain = body( "lastname" ).isAlpha( "es-ES" ).withMessage( "Only letters are allowed" ).trim()
   .isLength( { min: 3, max: 15 } ).withMessage( "The lastname's length should be between 3 and 15 characters." )

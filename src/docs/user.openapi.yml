@@ -1,0 +1,1574 @@
+openapi: '3.0.0'
+info:
+  title: User API
+  version: 1.0.0
+  description: API for user management
+
+paths:
+
+
+# EMPLOYEE GROUP ROUTES
+
+  /user:
+    post:
+      summary: Create a new user
+      description: Registers a new user in the system.
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - username
+                - lastname
+                - password
+              properties:
+                name:
+                  type: string
+                  minLength: 3
+                  maxLength: 15
+                  description: User's first name (Only letters, capitalized)
+                  example: John
+                username:
+                  type: string
+                  minLength: 3
+                  maxLength: 15
+                  description: Unique username (Only letters)
+                  example: johndoe
+                lastname:
+                  type: string
+                  minLength: 3
+                  maxLength: 15
+                  description: User's last name (Only letters, capitalized)
+                  example: Doe
+                password:
+                  type: string
+                  minLength: 6
+                  maxLength: 6
+                  pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]+$"
+                  description: |
+                    The password must:
+                      - Have exactly 6 characters
+                      - Contain at least 1 lowercase letter
+                      - Contain at least 1 uppercase letter
+                      - Contain at least 1 number
+                      - Not contain spaces
+                  example: Abc123
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "New User registered successfully."
+        "400":
+          description: Bad request (Validation error or username already taken)
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                Required Fields:
+                  summary: This fields are required
+                  value:
+                    errors:
+                      -  
+                        type: "field"
+                        msg: "The name is required."
+                        path: "name"
+                        location: "body"
+                      -  
+                        type: "field"
+                        msg: "The username is required."
+                        path: "username"
+                        location: "body"
+                      -  
+                        type: "field"
+                        msg: "The last name is required."
+                        path: "lastname"
+                        location: "body"
+                      -  
+                        type: "field"
+                        msg: "The password is required."
+                        path: "password"
+                        location: "body"
+                commonValidations:
+                  summary: Common validations
+                  value:
+                    errors:
+                      -  
+                         types: field
+                         value: D1
+                         message: Only letters are allowed
+                         paths: username
+                         location: body
+                      -  
+                         types: field
+                         value: D1
+                         message: The username length should be between 3 and 15 characters.
+                         paths: username
+                         location: body
+                      -  
+                         types: field
+                         value: D1
+                         message: Only letters are allowed
+                         paths: name
+                         location: body
+                      -  
+                         types: field
+                         value: D1
+                         message: The name's length should be between 3 and 15 characters.
+                         paths: name
+                         location: body
+                      -  
+                         types: field
+                         value: G2
+                         message: Only letters are allowed
+                         paths: lastname
+                         location: body
+                      -  
+                         types: field
+                         value: G2
+                         message: The lastname's length should be between 3 and 15 characters.
+                         paths: lastname
+                         location: body
+                invalidPass:
+                  summary: Invalid Password
+                  value:
+                    errors:
+                      -  
+                         types: field
+                         msg: The password must have at least 1 lowercase.
+                         paths: password
+                         location: body
+                         value: --- --
+                      -  
+                         types: field
+                         msg: The password must have at least 1 uppercase.
+                         paths: password
+                         location: body
+                         value: --- --
+                      -  
+                         types: field
+                         msg: The password must have at least 1 number.
+                         paths: password
+                         location: body
+                         value: --- --
+                      -  
+                         types: field
+                         msg: The password can't have an empty space.
+                         paths: password
+                         location: body
+                         value: --- --
+                usernameTaken:
+                  summary: Username already taken
+                  value:
+                    errors:
+                      -  
+                         types: field
+                         msg: The username is already taken.
+                         paths: username
+                         location: body
+                         value: johndoe
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Something went wrong."
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+#   /uscer:
+
+#     post:
+#       tags:
+#         - User
+#       summary: Create employee
+#       description: This can only be done by the logged in user.
+#       operationId: createEmployee
+#       requestBody:
+#         description: New employee information
+#         content:
+#           application/json:
+#             schema:
+#               $ref: '#/components/schemas/CreateEmployeeInput'
+#       responses:
+#         '200':
+#           description: Successful Operation
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   message:
+#                     type: string
+#                     example: New employee registered successfully.
+#         '400':
+#           description: Bad Request
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/EmployeeBadRequestSchema'
+
+#     get:
+#       tags:
+#         - Employee
+#       summary: Returns every employee in the system
+#       description: ''
+#       operationId: getEmployee
+#       parameters:
+#         - in: query
+#           name: reset
+#           schema:
+#             type: boolean
+#           description: If the parameter is sent in query it will return the employees in need of a reset 
+#       responses:
+#         '200':
+#           description: Successful Operation
+#           content:
+#             application/json:
+#               schema:
+#                 type: array
+#                 items:
+#                   type: array
+#               examples:
+#                 allEmployees:
+#                           summary: All Employees
+#                           value:
+#                             -  
+#                               id_employee: 1
+#                               id_group: 2
+#                               group: "Operario"
+#                               id_section: 2
+#                               section: "Planificacion"
+#                               section_code: "101"
+#                               id_state: 1
+#                               state_code: "0"
+#                               state: "Active"
+#                               id_cell: 1
+#                               cell: "Venturi"
+#                               record: "1235"
+#                               name: "Ally"
+#                               lastname: "Green"
+#                               dni: "00000001"
+#                               reset: false
+#                               change_password: false
+#                             -
+#                               id_employee: 2
+#                               id_group: 2
+#                               group: "Operario"
+#                               id_section: 2
+#                               section: "Planificacion"
+#                               section_code: "101"
+#                               id_state: 1
+#                               state_code: "0"
+#                               state: "Active"
+#                               id_cell: 1
+#                               cell: "Venturi"
+#                               record: "1234"
+#                               name: "Addie"
+#                               lastname: "Wolf"
+#                               dni: "00000000"
+#                               reset: false
+#                               change_password: false
+#                             -  
+#                               id_employee: 3
+#                               id_group: 2
+#                               group: "Operario"
+#                               id_section: 2
+#                               section: "Planificacion"
+#                               section_code: "101"
+#                               id_state: 1
+#                               state_code: "0"
+#                               state: "Active"
+#                               id_cell: 1
+#                               cell: "Venturi"
+#                               record: "1241"
+#                               name: "Alexie"
+#                               lastname: "Ernser"
+#                               dni: "000000002"
+#                               reset: false
+#                               change_password: false
+#                             -  
+#                               id_employee: 4
+#                               id_group: 3
+#                               group: "Preparador"
+#                               id_section: 13
+#                               section: "Sup. APE"
+#                               section_code: "180"
+#                               id_state: 1
+#                               state_code: "0"
+#                               state: "Active"
+#                               id_cell: 2
+#                               cell: "BOMBAS"
+#                               record: "1237"
+#                               name: "Colin"
+#                               lastname: "Langosh"
+#                               dni: "000000020"
+#                               reset: false
+#                               change_password: false
+#                             -  
+#                               id_employee: 5
+#                               id_group: 3
+#                               group: "Preparador"
+#                               id_section: 13
+#                               section: "Sup. APE"
+#                               section_code: "180"
+#                               id_state: 1
+#                               state_code: "0"
+#                               state: "Active"
+#                               id_cell: 2
+#                               cell: "BOMBAS"
+#                               record: "1238"
+#                               name: "Jonatan"
+#                               lastname: "Stark"
+#                               dni: "000000030"
+#                               reset: false
+#                               change_password: false
+#                 resetEmployees:
+#                           summary: Reset Employees
+#                           value:
+#                             -  
+#                               id_employee: 5
+#                               id_group: 3
+#                               group: "Preparador"
+#                               id_section: 13
+#                               section: "Sup. APE"
+#                               section_code: "180"
+#                               id_state: 1
+#                               state_code: "0"
+#                               state: "Active"
+#                               id_cell: 2
+#                               cell: "BOMBAS"
+#                               record: "1238"
+#                               name: "Jonatan"
+#                               lastname: "Stark"
+#                               dni: "000000030"
+#                               reset: false
+#                               change_password: false
+
+#   /employee/reduced:
+#     get:
+#       tags:
+#         - Employee
+#       summary: Returns id, name and lastname of every employee in the system
+#       description: ''
+#       operationId: getReducedEmployee
+#       responses:
+#         '200':
+#           description: Successful Operation
+#           content:
+#             application/json:
+#               schema:
+#                 type: array
+#                 items:
+#                   type: array
+#                 example:
+#                   -  
+#                      id_employee: 1
+#                      name: "Ally"
+#                      lastname: "Green"
+#                   -  
+#                      id_employee: 2
+#                      name: "Martin"
+#                      lastname: "Zanetti"
+#                   -  
+#                      id_employee: 3
+#                      name: "ADRIAN"
+#                      lastname: "BARRIONUEVO"
+#                   -  
+#                      id_employee: 4
+#                      name: "HUGO"
+#                      lastname: "GALLARDO"
+
+                     
+#   /employee/group/{groupId}:
+#     get:
+#       tags:
+#         - Employee
+#       summary: Returns employees by group id
+#       description: ''
+#       operationId: getEmployeesByGroupId
+#       parameters:
+#         - name: groupId
+#           in: path
+#           description: ID of a group
+#           required: true
+#           schema:
+#             type: integer
+#             format: int64
+#             example: 1
+#       responses:
+#         '200':
+#           description: Successful Operation
+#           content:
+#             application/json:
+#               schema:
+#                 type: array
+#                 items:
+#                   oneOf:
+#                     - $ref: '#/components/schemas/EmployeeBySectionOrGroup'
+#               example:
+#                 - id_employee: 2
+#                   id_group: 3
+#                   group: "Preparador"
+#                   id_section: 1
+#                   section_code: "100"
+#                   id_state: 1
+#                   state_code: "0"
+#                   state: "Active"
+#                   id_cell: 2
+#                   cell: "BOMBAS"
+#                   record: "1235"
+#                   name: "Ally"
+#                   lastname: "Green"
+#                   dni: "00000001"
+#                   reset: false
+#                   change_password: false
+#                 - id_employee: 5
+#                   id_group: 3
+#                   group: "Preparador"
+#                   id_section: 1
+#                   section_code: "100"
+#                   id_state: 1
+#                   state_code: "0"
+#                   state: "Active"
+#                   id_cell: 2
+#                   cell: "BOMBAS"
+#                   record: "1234"
+#                   name: "Addie"
+#                   lastname: "Wolf"
+#                   dni: "00000000"
+#                   reset: false
+#                   change_password: false
+
+#         '400':
+#               description: Bad request
+#               content:
+#                 application/json:
+#                   schema:
+#                     type: object
+#                     properties:
+#                       errors:
+#                         type: array
+#                         items:
+#                           oneOf:
+#                             - $ref: '#/components/schemas/ErrorValidateScheema'
+#                         example:
+#                          -  type: field
+#                             value: a
+#                             msg: The id value must be a number.
+#                             path: groupId
+#                             location: params
+              
+#         '404':
+#           description: Not Found
+#           content:
+#             application/json:
+#               schema:
+#                     type: object
+#                     properties:
+#                       message:
+#                         type: string
+#                         example: 'Error: There is no Group registered with that id.'
+#                         description: The message to identify the error.
+#                       fn:
+#                         type: string
+#                         example: at Object.getGroupById
+#                         description: The function where the error is triggered.
+#                       file:
+#                         type: string
+#                         example: group.methods.ts:54:13
+#                         description: The file where the error is triggered.         
+
+#   /employee/section/{sectionId}:
+#     get:
+#       tags:
+#         - Employee
+#       summary: Returns employees by section id
+#       description: ''
+#       operationId: getEmployeesBySectionId
+#       parameters:
+#         - name: sectionId
+#           in: path
+#           description: ID of a section
+#           required: true
+#           schema:
+#             type: integer
+#             format: int64
+#             example: 1
+#       responses:
+#         '200':
+#           description: Successful Operation
+#           content:
+#             application/json:
+#               schema:
+#                 type: array
+#                 items:
+#                   oneOf:
+#                     - $ref: '#/components/schemas/EmployeeBySectionOrGroup'
+#               example:
+#                 - id_employee: 1
+#                   id_group: 1
+#                   group: "Root"
+#                   id_section: 1
+#                   section_code: "100"
+#                   id_state: 1
+#                   state_code: "0"
+#                   state: "Active"
+#                   id_cell: 2
+#                   cell: "BOMBAS"
+#                   record: "1235"
+#                   name: "Ally"
+#                   lastname: "Green"
+#                   dni: "00000001"
+#                   reset: false
+#                   change_password: false
+#                 - id_employee: 2
+#                   id_group: 3
+#                   group: "Preparador"
+#                   id_section: 1
+#                   section_code: "100"
+#                   id_state: 1
+#                   state_code: "0"
+#                   state: "Active"
+#                   id_cell: 2
+#                   cell: "BOMBAS"
+#                   record: "1234"
+#                   name: "Addie"
+#                   lastname: "Wolf"
+#                   dni: "00000000"
+#                   reset: false
+#                   change_password: false
+
+#         '400':
+#               description: Bad request
+#               content:
+#                 application/json:
+#                   schema:
+#                     type: object
+#                     properties:
+#                       errors:
+#                         type: array
+#                         items:
+#                           oneOf:
+#                             - $ref: '#/components/schemas/ErrorValidateScheema'
+#                         example:
+#                          -  type: field
+#                             value: a
+#                             msg: The id value must be a number.
+#                             path: sectionId
+#                             location: params
+              
+#         '404':
+#           description: Not Found
+#           content:
+#             application/json:
+#               schema:
+#                     type: object
+#                     properties:
+#                       message:
+#                         type: string
+#                         example: 'Error: There is no Section registered with that id.'
+#                         description: The message to identify the error.
+#                       fn:
+#                         type: string
+#                         example: at Object.getSectionById
+#                         description: The function where the error is triggered.
+#                       file:
+#                         type: string
+#                         example: section.methods.ts:54:13
+#                         description: The file where the error is triggered.              
+
+                
+#   /employee/{Id}:
+#     get:
+#       tags:
+#         - Employee
+#       summary: Returns employee by id
+#       description: ''
+#       operationId: getEmployeeById
+#       parameters:
+#         - name: Id
+#           in: path
+#           description: ID of employee to return
+#           required: true
+#           schema:
+#             type: integer
+#             format: int64
+#             example: 1
+#       responses:
+#         '200':
+#           description: Successful Operation
+#           content:
+#             application/json:
+#               schema:
+#                 type: array
+#                 items:
+#                   type: array
+#                 example:
+#                   -  
+#                     id_employee: 1
+#                     id_group: 1
+#                     group: Root
+#                     id_section: null
+#                     section: null
+#                     section_code: null
+#                     id_state: 1
+#                     state_code: 0
+#                     state: Active
+#                     id_cell: null
+#                     cell_code: null
+#                     cell: null
+#                     record: 1235
+#                     name: Ally
+#                     lastname: Green
+#                     dni: 00000001
+#                     reset: true
+#                     change_password: true
+
+#         '404':
+#           description: Not Found
+#           content:
+#             application/json:
+#               schema:
+#                     type: object
+#                     properties:
+#                       message:
+#                         type: string
+#                         example: 'Error: There is no Employee registered with that id.'
+#                       fn:
+#                         type: string
+#                         example: at Object.getEmployeeViewById
+#                       file:
+#                         type: string
+#                         example: employee.methods.ts:47:13
+
+#     put:
+#           tags:
+#             - Employee
+#           summary: Updates employee by id
+#           description: ''
+#           operationId: putEmployeeById
+#           parameters:
+#             - name: Id
+#               in: path
+#               description: ID of Employee to update
+#               required: true
+#               schema:
+#                 type: integer
+#                 format: int64
+#                 example: 2
+#           requestBody:
+#             description: New employee information
+#             content:
+#               application/json:
+#                 schema:
+#                   $ref: '#/components/schemas/UpdateEmployeeInput'
+#           responses:
+#             '200':
+#               description: successful operation
+#               content:
+#                 application/json:
+#                   schema:
+#                     type: object
+#                     properties:
+#                       message:
+#                         type: string
+#                         example: Employee updated successfully.
+#             '400':
+#               description: Bad request
+#               content:
+#                 application/json:
+#                   schema:
+#                     $ref: '#/components/schemas/EmployeeUpdateBadRequestSchema'
+                    
+#             '403':
+#               description: Forbidden
+#               content:
+#                 application/json:
+#                   schema:
+#                     type: object
+#                     properties:
+#                       message:
+#                         type: string
+#                         example: "Error: Cannot update locked record"
+#                       fn:
+#                         type: string
+#                         example: "at Object.updateEmployee"
+#                       file:
+#                         type: string
+#                         example: "employee.methods.ts:112:50"
+#             '404':
+#               description: Not Found
+#               content:
+#                 application/json:
+#                   schema:
+#                         $ref: '#/components/schemas/EmployeeNotFoundSchema'
+
+    
+#     delete:
+#           tags:
+#             - Employee
+#           summary: Deletes employee by id
+#           description: ''
+#           operationId: deleteEmployeeById
+#           parameters:
+#             - name: Id
+#               in: path
+#               description: ID of employee to delete
+#               required: true
+#               schema:
+#                 type: integer
+#                 format: int64
+#                 example: 1
+#           responses:
+#             '200':
+#               description: Successful Operation
+#               content:
+#                 application/json:
+#                   schema:
+#                     type: object
+#                     properties:
+#                       message:
+#                         type: string
+#                         example: Registry deleted successfully.
+#             '403':
+#               description: Forbidden
+#               content:
+#                 application/json:
+#                   schema:
+#                         type: object
+#                         properties:
+#                           message:
+#                             type: string
+#                             example: 'Error: Cannot delete locked record' 
+#                           fn:
+#                             type: string
+#                             example: at Object.deleteEmployeeById
+#                           file:
+#                             type: string
+#                             example: employee.controller.ts:34:13
+#             '404':
+#               description: Not Found
+#               content:
+#                 application/json:
+#                   schema:
+#                         $ref: '#/components/schemas/EmployeeNotFoundSchema'     
+
+
+#   /employee/reset/{record}:
+#     put:
+#           tags:
+#             - Employee
+#           summary: Send reques to reset password
+#           description: ''
+#           operationId: resetPassword
+#           parameters:
+#             - name: record
+#               in: path
+#               description: Record of Employee to reset password
+#               required: true
+#               schema:
+#                 type: integer
+#                 format: int64
+#                 example: 1235
+#           requestBody:
+#             description: New employee information
+#             content:
+#               application/json:
+#                 schema:
+#                   $ref: '#/components/schemas/ResetEmployeePass'
+#           responses:
+#             '200':
+#               description: successful operation
+#               content:
+#                 application/json:
+#                   schema:
+#                     type: object
+#                     properties:
+#                       message:
+#                         type: string
+#                         example: Password reset request sent.
+#             '400':
+#               description: Bad request
+#               content:
+#                 application/json:
+#                   schema:
+#                     type: object
+#                     properties:
+#                       errors:
+#                         type: array
+#                         items:
+#                           oneOf:
+#                            - $ref: '#/components/schemas/ErrorValidateScheema'
+#                   examples:
+#                     paramErrors:
+#                           summary: Error in params
+#                           value:
+#                             errors:
+#                               -  
+#                                  type: field
+#                                  msg: The record value must be a number.
+#                                  path: record
+#                                  location: params
+#                                  value: 1235a
+#                               -  
+#                                  type: field
+#                                  msg: The record's length should have a length of 4 characters.
+#                                  path: record
+#                                  location: params
+#                                  value: 1235a
+#                     bodyErrors:
+#                           summary: Errors in body
+#                           value:
+#                             errors:
+#                                 -  
+#                                   type: field
+#                                   msg: The dni is required.
+#                                   path: dni
+#                                   location: body
+#                                 -
+#                                   type: field
+#                                   value: 123a
+#                                   msg: The dni value must be a number.
+#                                   path: dni
+#                                   location: body
+#                                 -
+#                                   type: field
+#                                   value: 1233
+#                                   msg: The dni must have between 8 and 10 characters.
+#                                   path: dni
+#                                   location: body
+
+#                     dniNotMatch:
+#                           summary: Dni doesn't match
+#                           value:
+#                             message: "Error: The DNI number in the database does not match the one entered."
+#                             fn: at resetPassword
+#                             file: employee.controller.ts:109:11
+                    
+#             '404':
+#               description: Not Found
+#               content:
+#                 application/json:
+#                   schema:
+#                         $ref: '#/components/schemas/EmployeeNotFoundSchema'
+#                   example:
+#                     message: "Error: There is no Employee registered with that record."
+#                     fn: at Object.getEmployeeByRecord
+#                     file: employee.methods.ts:85:13
+
+#             '500':
+#               description: Not authorized
+#               content:
+#                 application/json:
+#                   example:
+#                     message: "Error: Cannot update locked record."
+#                     fn: at resetPassword
+#                     file: employee.controller.ts:113:11
+
+
+#   /employee/reset/{id}/accept:
+#     put:
+#           tags:
+#             - Employee
+#           summary: Accept password reset
+#           description: ''
+#           operationId: acceptReset
+#           parameters:
+#             - name: id
+#               in: path
+#               description: Employees unique identifier.
+#               required: true
+#               schema:
+#                 type: integer
+#                 format: int64
+#                 example: 2
+#           responses:
+#             '200':
+#               description: successful operation
+#               content:
+#                 application/json:
+#                   schema:
+#                     type: object
+#                     properties:
+#                       message:
+#                         type: string
+#                         example: Password reseted succesfully.
+#             '400':
+#               description: Bad request
+#               content:
+#                 application/json:
+#                   schema:
+#                     type: object
+#                     properties:
+#                       errors:
+#                         type: array
+#                         items:
+#                           oneOf:
+#                            - $ref: '#/components/schemas/ErrorValidateScheema'
+#                   example:
+#                             errors:
+#                               -  
+#                                  type: "field"
+#                                  value: "a"
+#                                  msg: "The id value must be a number."
+#                                  path: "id"
+#                                  location: "params"
+
+#             "403":
+#               description: Not authorized
+#               content:
+#                 application/json:
+#                   schema:
+#                     oneOf:
+#                       - $ref: '#/components/schemas/CommonErrorScheema'
+#                   examples:
+#                       notReset:
+#                         summary: Not Waiting For Reset
+#                         value:
+#                           message: "Error: This user is not waiting a password reset."
+#                           fn: "at acceptReset"
+#                           file: "employee.controller.ts:130:23"
+#                       lockedRecord:
+#                         summary: Locked Record
+#                         value:
+#                           message: "Error: Cannot update locked record"
+#                           fn: "at Object.updateEmployee"
+#                           file: "employee.methods.ts:112:50"
+
+#             '404':
+#               description: Not Found
+#               content:
+#                 application/json:
+#                   schema:
+#                         $ref: '#/components/schemas/EmployeeNotFoundSchema'
+#                   example:
+#                     message: "Error: There is no Employee registered with that id."
+#                     fn: "at Object.getEmployeeById"
+#                     file: "employee.methods.ts:66:13"
+
+
+#   /employee/bulk:
+#     put:
+#           tags:
+#             - Employee
+#           summary: Updates many employees on bulk
+#           description: 'Updates group, section, state for many employees at once'
+#           operationId: bulkUpdate
+#           requestBody:
+#             description: New employee information
+#             content:
+#               application/json:
+#                 schema:
+#                   $ref: '#/components/schemas/UpdateEmployeesBulk'
+#           responses:
+#             '200':
+#               description: successful operation
+#               content:
+#                 application/json:
+#                   schema:
+#                     type: object
+#                     properties:
+#                       message:
+#                         type: string
+#                         example: Registry updated successfully.
+#             '400':
+#               description: Bad request
+#               content:
+#                 application/json:
+#                   schema:
+#                     type: object
+#                     properties:
+#                       errors:
+#                         type: array
+#                         items:
+#                           oneOf:
+#                            - $ref: '#/components/schemas/ErrorValidateScheema'
+#                   examples:
+#                     commonValidations:
+#                           summary: Ids format
+#                           value:
+#                             errors:
+#                               -  
+#                                  type: field
+#                                  msg: The Employee Id value must be a number.
+#                                  path: ids[0].id_employee
+#                                  location: body
+#                                  value: a,
+#                               -  
+#                                  type: field
+#                                  msg: The Section Id value must be a number.
+#                                  path: id_section
+#                                  location: body
+#                                  value: b
+#                               -  
+#                                  type: field
+#                                  msg: The Group Id value must be a number.
+#                                  path: id_group
+#                                  location: body
+#                                  value: a
+#                               -  
+#                                  type: field
+#                                  msg: The State Id value must be a number.
+#                                  path: id_state
+#                                  location: body
+#                                  value: c
+#                     requiredArray:
+#                           summary: Array Required
+#                           value:
+#                             errors:
+#                               -  
+#                                 type: field
+#                                 msg: The ids array is required.
+#                                 path: ids
+#                                 location: body
+#                     required:
+#                           summary: Employee Id Required
+#                           value:
+#                             errors:
+#                               -  
+#                                 type: field
+#                                 msg: At least 1 id_employee is required.
+#                                 path: ids[0].id_employee
+#                                 location: body
+#                               -  
+#                                  type: field
+#                                  msg: The Employee Id value must be a number.
+#                                  path: ids[0].id_employee
+#                                  location: body
+                    
+                    
+#             "404":
+#               description: Not Found
+#               content:
+#                 application/json:
+#                   schema:
+#                     oneOf:
+#                       - $ref: '#/components/schemas/CommonErrorScheema'
+#                   examples:
+#                       GroupNotFound:
+#                         summary: Group Not Found
+#                         value:
+#                           message: "Error: There is no Group registered with that id."
+#                           fn: at Object.getGroupById
+#                           file: group.methods.ts:46:13
+#                       SectionNotFound:
+#                         summary: Section Not Found
+#                         value:
+#                           message:  "Error: There is no Section registered with that id."
+#                           fn: at Object.getSectionById
+#                           file: section.methods.ts:54:13
+#                       EmployeeStateNotFound:
+#                         summary: Employee State Not Found
+#                         value:
+#                           message: "Error: There is no Employee State registered with that id."
+#                           fn: at getEmployeeStateById,
+#                           file: employeeState.methods.ts:47:13
+#                       EmployeeNotFound:
+#                         summary: Employee Not Found
+#                         value:
+#                           message: 'Error: There is no Employee registered with that id.'
+#                           fn: at Object.getEmployeeById
+#                           file: employee.methods.ts:45:13 
+
+#   /employee/update_password/{Id}:
+#     put:
+#           tags:
+#             - Employee
+#           summary: Updates employee's password by id
+#           description: ''
+#           operationId: updatePassword
+#           parameters:
+#             - name: Id
+#               in: path
+#               description: ID of Employee to update
+#               required: true
+#               schema:
+#                 type: integer
+#                 format: int64
+#                 example: 2
+#           requestBody:
+#             description: New employee information
+#             content:
+#               application/json:
+#                 schema:
+#                   $ref: '#/components/schemas/UpdateEmployeePassInput'
+#           responses:
+#             '200':
+#               description: successful operation
+#               content:
+#                 application/json:
+#                   schema:
+#                     type: object
+#                     properties:
+#                       message:
+#                         type: string
+#                         example: The password has been changed correctly.
+#             '400':
+#               description: Bad request
+#               content:
+#                 application/json:
+#                   schema:
+#                     type: object
+#                     properties:
+#                       errors:
+#                         type: array
+#                         items:
+#                           oneOf:
+#                            - $ref: '#/components/schemas/ErrorValidateScheema'
+#                   examples:
+#                     invalidPass:
+#                           summary: Invalid Password
+#                           value:
+#                             errors:
+#                               -  
+#                                  types: field
+#                                  msg: The password must have at least 1 lowercase.
+#                                  paths: password
+#                                  location: body
+#                                  value: --- --
+#                               -  
+#                                  types: field
+#                                  msg: The password must have at least 1 uppercase.
+#                                  paths: password
+#                                  location: body
+#                                  value: --- --
+#                               -  
+#                                  types: field
+#                                  msg: The password must have at least 1 number.
+#                                  paths: password
+#                                  location: body
+#                                  value: --- --
+#                               -  
+#                                  types: field
+#                                  msg: The password can't have an empty space.
+#                                  paths: password
+#                                  location: body
+#                                  value: --- --
+#                     invalidPassLength:
+#                           summary: Invalid Password Length
+#                           value:
+#                             errors:
+#                               -  
+#                                  types: field
+#                                  msg: The password's length should have a length of 6 characters.
+#                                  paths: password
+#                                  location: body
+#                                  value: Hola1
+#                     required:
+#                           summary: Required
+#                           value:
+#                             errors:
+#                               -  
+#                                  types: field
+#                                  msg: The password is required.
+#                                  paths: password
+#                                  location: body
+#                               -  
+#                                  types: field
+#                                  msg: The current password is required.
+#                                  paths: old_password
+#                                  location: body  
+#                     samePass:
+#                           summary: Same Password
+#                           value:
+#                             message: "Error: You new password can't be the same as your old password."
+#                             fn: at updatePassword
+#                             file: employee.controller.ts:53:43
+                    
+#             '401':
+#               description: Not Found
+#               content:
+#                 application/json:
+#                   schema:
+#                         type: object
+#                         properties:
+#                           message:
+#                             type: string
+#                             example: "Error: You current password is incorrect."
+#                           fn:
+#                             type: string
+#                             example: at updatePassword
+#                           file:
+#                             type: string
+#                             example: employee.controller.ts:50:11
+                    
+#             '404':
+#               description: Not Found
+#               content:
+#                 application/json:
+#                   schema:
+#                         type: object
+#                         properties:
+#                           message:
+#                             type: string
+#                             example: There is no Employee registered with that id.
+#                           fn:
+#                             type: string
+#                             example: middleware.validateId
+
+
+
+
+# components:
+#   schemas:
+
+#   # EMPLOYEE SCHEMAS
+
+#     CreateEmployeeInput:
+#         type: object
+#         required:
+#           - record
+#           - name
+#           - lastname
+#           - dni
+#         properties:
+#           record:
+#            type: number
+#            example: 1166
+#            description: 4 digits number to identify the employee.
+#           id_section:
+#            type: number
+#            example: 1
+#            description: The section Id.
+#           id_group:
+#            type: number
+#            example: 1
+#            description: The group Id.
+#           id_state:
+#            type: number
+#            example: 1
+#            description: The state Id.
+#           name:
+#            type: string
+#            example: Ally
+#            description: The employee's name.
+#           lastname:
+#            type: number
+#            example: Green
+#            description: The employee's last name.
+#           dni:
+#            type: number
+#            example: 32204065
+#            description: Employee's personal identifier.
+    
+#     UpdateEmployeeInput:
+#         type: object
+#         properties:
+#           record:
+#            type: number
+#            example: 1166
+#            description: 4 digits number to identify the employee.
+#           id_section:
+#            type: number
+#            example: 1
+#            description: The section Id.
+#           id_group:
+#            type: number
+#            example: 1
+#            description: The group Id.
+#           id_state:
+#            type: number
+#            example: 1
+#            description: The state Id.
+#           name:
+#            type: string
+#            example: Ally
+#            description: The employee's name.
+#           lastname:
+#            type: number
+#            example: Green
+#            description: The employee's last name.
+#           dni:
+#            type: number
+#            example: 32204065
+#            description: Employee's personal identifier.
+
+#     ResetEmployeePass:
+#       properties:
+#         dni:
+#           type: number
+#           example: "37608432"
+#           description: Employee's personal identifier.
+    
+#     UpdateEmployeesBulk:
+#         type: object
+#         properties:
+#           ids:
+#            type: array
+#            example:
+#             - id_employee: 2
+#             - id_employee: 3
+#             - id_employee: 4
+#            description: The ids of all employees to update.
+#           id_group:
+#            type: number
+#            example: 2
+#            description: The group id to be asigned to the employees.
+#           id_section:
+#            type: number
+#            example: 2
+#            description: The section id to be asigned to the employees.
+#           id_state:
+#            type: number
+#            example: 2
+#            description: The state id to be asigned to the employees.
+    
+#     UpdateEmployeePassInput:
+#         type: object
+#         properties:
+#           old_password:
+#            type: string
+#            example: 123456
+#            description: The employee's current password.
+#           password:
+#            type: string
+#            example: Pedro1
+#            description: New password, it must have 1 uppercase, 1 lowercase, 1 number and no empty spaces.
+
+#     EmployeeNotFoundSchema:
+#         type: object
+#         properties:
+#           message:
+#             type: string
+#             example: There is no Employee registered with that id.
+#           fn:
+#             type: string
+#             example: middleware.validateId
+
+#     EmployeeBadRequestSchema:
+#         type: object
+#         properties:
+#           errors:
+#             type: array
+#             items:
+#               type: array
+#             example:
+#               -  
+#                  types: field
+#                  message: The record is required.
+#                  paths: record
+#                  location: body
+#               -  
+#                  types: field
+#                  message: The name is required.
+#                  paths: name
+#                  location: body
+#               -  
+#                  types: field
+#                  message: The last name is required.
+#                  paths: lastname
+#                  location: body
+#               -  
+#                  types: field
+#                  message: The dni is required.
+#                  paths: dni
+#                  location: body
+
+#     CommonErrorScheema:
+#       type: object
+#       properties:
+#         message:
+#           type: string
+#           example: 'Error: There is no Employee with that id.'
+#         fn: 
+#           type: string
+#           example: at Object.getEmployeeById
+#         file: 
+#           type: string
+#           example: employee.methods.ts:45:13
+
+#     EmployeeUpdateBadRequestSchema:
+#         type: object
+#         properties:
+#           errors:
+#             type: array
+#             items:
+#               type: array
+#             example:
+#               -  
+#                  types: field
+#                  value: corcho
+#                  message: The record value must be a number.
+#                  paths: record
+#                  location: body
+#               -  
+#                  types: field
+#                  value: corcho
+#                  message: The record's length should have a length of 4 characters.
+#                  paths: record
+#                  location: body
+#               -  
+#                  types: field
+#                  value: a
+#                  message: The Group Id value must be a number.
+#                  paths: id_group
+#                  location: body
+#               -  
+#                  types: field
+#                  value: b
+#                  message: The Section Id value must be a number.
+#                  paths: id_section
+#                  location: body
+#               -  
+#                  types: field
+#                  value: c
+#                  message: The State Id value must be a number.
+#                  paths: id_state
+#                  location: body
+#               -  
+#                  types: field
+#                  value: D1
+#                  message: Only letters are allowed
+#                  paths: name
+#                  location: body
+#               -  
+#                  types: field
+#                  value: D1
+#                  message: The name's length should be between 3 and 15 characters.
+#                  paths: name
+#                  location: body
+#               -  
+#                  types: field
+#                  value: G2
+#                  message: Only letters are allowed
+#                  paths: lastname
+#                  location: body
+#               -  
+#                  types: field
+#                  value: G2
+#                  message: The lastname's length should be between 3 and 15 characters.
+#                  paths: lastname
+#                  location: body
+#               -  
+#                  types: field
+#                  value: dn12
+#                  message: The dni value must be a number.
+#                  paths: dni
+#                  location: body
+#               -  
+#                  types: field
+#                  value: dn12
+#                  message: The dni must have between 8 and 10 characters.
+#                  paths: dni
+#                  location: body
+#               -  
+#                  types: field
+#                  value: true
+#                  message: The locked status cannot be updated through this route.
+#                  paths: locked
+#                  location: body
+#               -  
+#                  types: field
+#                  value: true
+#                  message: The reset status cannot be updated through this route.
+#                  paths: reset
+#                  location: body
+#               -  
+#                  types: field
+#                  value: $%$·&&%$/&%/!·$%$&&/·$·$%ª·
+#                  message: The password cannot be updated through this route.
+#                  paths: password
+#                  location: body
+
+#     ErrorValidateScheema: 
+#       type: object
+#       properties:
+#         message:
+#           type: string
+#         value:
+#           type: string
+#         msg:
+#           type: string
+#         path:
+#           type: string
+#         location:
+#           type: string
+
+#     EmployeeBySectionOrGroup: 
+#       type: object
+#       properties:
+#         id_employee:
+#           type: number
+#           description: Employee's unique identifier.
+#           example: 1
+#         id_group:
+#           type: number
+#           description: Group's unique identifier.
+#           example: 1
+#         group:
+#           type: string
+#           description: Group's description.
+#           example: Root
+#         id_section:
+#           type: number
+#           description: Section's unique identifier.
+#           example: 1
+#         section_code:
+#           type: string
+#           description: Section's code.
+#           example: 101
+#         id_state:
+#           type: number
+#           description: Employee state's unique identifier.
+#           example: 1
+#         state_code:
+#           type: number
+#           description: Employee state's code.
+#           example: 0
+#         state:
+#           type: string
+#           description: Employee state's description.
+#           example: Active
+#         id_cell:
+#           type: number
+#           description: Cell's unique identifier.
+#           example: 1
+#         cell:
+#           type: string
+#           description: Cell's description.
+#           example: Venturi
+#         record:
+#           type: string
+#           description: Employee's record identifier.
+#           example: 1241
+#         name:
+#           type: string
+#           description: Employee's name.
+#           example: Alexie
+#         lastname:
+#           type: string
+#           description: Employee's lastname.
+#           example: Ernser
+#         dni:
+#           type: string
+#           description: Employee's lastname DNI.
+#           example: 27197753
+#         reset:
+#           type: boolean
+#           description: Employee's requires a password reset.
+#           example: false
+    
+         
+    
