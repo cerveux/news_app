@@ -13,9 +13,9 @@ interface InterfaceConfig {
 
 
 export const config: InterfaceConfig = {
-  port: Number(process.env.PORT)  || 4000,
+  port: Number( process.env.PORT )  || 4000,
   hostDatabase: process.env.HOST_DATABASE,
-nameDatabase: process.env.NAME_DATABASE,
-userDatabase: process.env.USER_DATABASE,
-passwordDatabase: process.env.PASSWORD_DATABASE,
+  nameDatabase: process.env.NAME_DATABASE,
+  userDatabase: process.env.USER_DATABASE,
+  passwordDatabase: process.env.PASSWORD_DATABASE,
 };
