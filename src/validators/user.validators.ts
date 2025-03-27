@@ -28,7 +28,7 @@ export const postEmployee: ValidationChain|RequestHandler[] = [
   username,
   body( "username" ).not().isEmpty().withMessage( "The username is required." ),
   lastName,
-  body( "lastname" ).not().isEmpty().withMessage( "The last name is required." ),
+  body( "lastname" ).not().isEmpty().withMessage( "The lastname is required." ),
   password,
   body( "password" ).not().isEmpty().withMessage( "The password is required." ),
   validateErrors
