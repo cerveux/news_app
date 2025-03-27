@@ -1,3 +1,1 @@
-llave duplicada viola restricción de unicidad «user_username_key» at Query 
-That username is already taken. at username 
-That username is already taken. at username 
+

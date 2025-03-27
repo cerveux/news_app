@@ -107,79 +107,73 @@ paths:
                   value:
                     errors:
                       -  
-                         types: field
+                         type: field
                          value: D1
-                         message: Only letters are allowed
-                         paths: username
+                         msg: Only letters are allowed
+                         path: username
                          location: body
                       -  
-                         types: field
+                         type: field
                          value: D1
-                         message: The username length should be between 3 and 15 characters.
-                         paths: username
+                         msg: The username length should be between 3 and 15 characters.
+                         path: username
                          location: body
                       -  
-                         types: field
+                         type: field
                          value: D1
-                         message: Only letters are allowed
-                         paths: name
+                         msg: Only letters are allowed
+                         path: name
                          location: body
                       -  
-                         types: field
+                         type: field
                          value: D1
-                         message: The name's length should be between 3 and 15 characters.
-                         paths: name
+                         msg: The name's length should be between 3 and 15 characters.
+                         path: name
                          location: body
                       -  
-                         types: field
+                         type: field
                          value: G2
-                         message: Only letters are allowed
-                         paths: lastname
+                         msg: Only letters are allowed
+                         path: lastname
                          location: body
                       -  
-                         types: field
+                         type: field
                          value: G2
-                         message: The lastname's length should be between 3 and 15 characters.
-                         paths: lastname
+                         msg: The lastname's length should be between 3 and 15 characters.
+                         path: lastname
                          location: body
                 invalidPass:
                   summary: Invalid Password
                   value:
                     errors:
                       -  
-                         types: field
+                         type: field
                          msg: The password must have at least 1 lowercase.
-                         paths: password
+                         path: password
                          location: body
                          value: --- --
                       -  
-                         types: field
+                         type: field
                          msg: The password must have at least 1 uppercase.
-                         paths: password
+                         path: password
                          location: body
                          value: --- --
                       -  
-                         types: field
+                         type: field
                          msg: The password must have at least 1 number.
-                         paths: password
+                         path: password
                          location: body
                          value: --- --
                       -  
-                         types: field
+                         type: field
                          msg: The password can't have an empty space.
-                         paths: password
+                         path: password
                          location: body
                          value: --- --
                 usernameTaken:
                   summary: Username already taken
                   value:
-                    errors:
-                      -  
-                         types: field
-                         msg: The username is already taken.
-                         paths: username
-                         location: body
-                         value: johndoe
+                    error: "That username is already taken."
         "500":
           description: Internal server error
           content:

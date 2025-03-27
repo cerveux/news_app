@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ParamsDictionary, RequestHandler } from "express-serve-static-core";
 import { handleAndInsertError } from "../helpers/error.helpers";
+import { CustomError } from "../helpers/customError.helpers";
 
 export const asyncHandler = <T extends ParamsDictionary>( controller: RequestHandler<T> ) => {
   return ( req: Request<T>, res: Response, next: NextFunction ) => {
@@ -8,9 +9,9 @@ export const asyncHandler = <T extends ParamsDictionary>( controller: RequestHan
   };
 };
 
-export const errorHandler = async ( error: Error, req: Request, res: Response, _next: NextFunction ) => {
+export const errorHandler = async ( error: CustomError, req: Request, res: Response, _next: NextFunction ) => {
   await handleAndInsertError( error );
-  res.status( 500 ).json( {
+  res.status( error.code || 500  ).json( {
     error: error.message
   } );
 } ;
