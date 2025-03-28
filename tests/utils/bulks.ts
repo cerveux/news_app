@@ -65,7 +65,7 @@ const forceDatabase = async () => {
 
 export {
   forceDatabase,
-  setConstraints as setForeignKeyChecks,
+  setConstraints,
   sequelizeConnection,
   truncateTable,
   sequelizeDisconnection
