@@ -9,6 +9,7 @@ interface InterfaceConfig {
   userDatabase: string | undefined;
   passwordDatabase: string | undefined;
   hostSwagger: string | undefined;
+  secret: string | undefined;
 }
 
 
@@ -19,5 +20,6 @@ export const config: InterfaceConfig = {
   nameDatabase: process.env.NAME_DATABASE,
   userDatabase: process.env.USER_DATABASE,
   passwordDatabase: process.env.PASSWORD_DATABASE,
-  hostSwagger: process.env.SWAGGER_HOST
+  hostSwagger: process.env.SWAGGER_HOST,
+  secret: process.env.SECRET
 };

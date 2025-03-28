@@ -1,13 +1,9 @@
 
-import { sequelizeConnection, sequelizeDisconnection,
-  setForeignKeyChecks,
-  truncateTable } from "./utils/bulks";
+import { sequelizeConnection, sequelizeDisconnection } from "./utils/bulks";
 
 import { UserMocks } from "./mocks";
 import { authenticatedRequest } from "./utils/supertest";
 
-
-const tableName = "user";
 describe( "User Routes", () => {
   const request = authenticatedRequest;
 
@@ -15,11 +11,6 @@ describe( "User Routes", () => {
     await sequelizeConnection();
   }, 30000 );
 
-  afterEach( async () => {
-    await setForeignKeyChecks( 0 );
-    await truncateTable( tableName );
-    await setForeignKeyChecks( 1 );
-  }, 30000 );
 
   afterAll( async () => {
     await sequelizeDisconnection();
@@ -32,9 +23,6 @@ describe( "User Routes", () => {
         .post( "/api/user" )
         .send( UserMocks[0] );
 
-      console.log( "body", body );
-
-
       expect( status ).toBe( 201 );
       expect( body ).toEqual( { message: "New User registered successfully." } );
     } );
@@ -42,6 +30,7 @@ describe( "User Routes", () => {
     test( "should fail to post user because of required attributes", async () => {
       const { status, body } = await request.post( "/api/user" ).send( {} );
       expect( status ).toBe( 400 );
+
       expect( body.errors[0] ).toHaveProperty( "path", "name" );
       expect( body.errors[0] ).toHaveProperty( "msg", "The name is required." );
       expect( body.errors[1] ).toHaveProperty( "path", "username" );
@@ -53,8 +42,8 @@ describe( "User Routes", () => {
     } );
 
     test( "should fail to post user because the username has to be unique", async () => {
-      await request.post( "/api/user" ).send(  UserMocks[0] );
       const { status, body } = await request.post( "/api/user" ).send(  UserMocks[0] );
+
       expect( status ).toBe( 400 );
       expect( body ).toEqual( {
         "error": "That username is already taken."
@@ -70,6 +59,7 @@ describe( "User Routes", () => {
         password: "Hola12",
       };
       const { status, body } = await request.post( "/api/user" ).send( newUser );
+
       expect( status ).toBe( 400 );
       expect( body ).toMatchObject(
         {
@@ -111,6 +101,7 @@ describe( "User Routes", () => {
         password: "--- --",
       };
       const { status, body } = await request.post( "/api/user" ).send( newUser );
+
       expect( status ).toBe( 400 );
       expect( body ).toMatchObject(
         {
