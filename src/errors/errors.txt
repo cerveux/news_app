@@ -1,1 +1,6 @@
 
+There is no Article registered with that id. at id 
+There is no Article registered with that id. at id 
+There is no Article registered with that id. at id 
+Incorrect username or password at login 
+That username is already taken. at username 
