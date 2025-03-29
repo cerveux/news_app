@@ -142,24 +142,40 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
+                example:
+                  totalItems: 20830
+                  totalPages: 2083
                   results:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          example: 1
-                        title:
-                          type: string
-                          example: "Understanding Node.js"
-                        body:
-                          type: string
-                          example: "In this article, we explore the fundamentals of Node.js."
-                        image_url:
-                          type: string
-                          example: "http://example.com/article-image.jpg"
+                    - 
+                      id: 1
+                      title: "Article 1"
+                      body: "This is the body of article 1"
+                      image_url: "https://example.com/image1.jpg"
+                      date: "2025-03-28"
+                      author:
+                        id: 1
+                        name: "John"
+                        lastname: "Doe"
+                    -
+                      id: 2
+                      title: "Article 2"
+                      body: "This is the body of article 2"
+                      image_url: "https://example.com/image2.jpg"
+                      date: "2025-03-28"
+                      author:
+                        id: 1
+                        name: "John"
+                        lastname: "Doe"
+                    -
+                      id: 3
+                      title: "Article 3"
+                      body: "This is the body of article 3"
+                      image_url: "https://example.com/image3.jpg"
+                      date: "2025-03-28"
+                      author:
+                        id: 1
+                        name: "John"
+                        lastname: "Doe"
         '400':
           description: Invalid parameters
           content:
@@ -326,7 +342,7 @@ paths:
                       -
                         type: "field"
                         value: "************************************************************"
-                        msg: "Invalid value"
+                        msg: "The title must be between 1 and 50 characters."
                         path: "title"
                         location: "body"
                       -

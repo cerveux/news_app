@@ -1,6 +1,10 @@
 import { literal, Op } from "sequelize";
 import { ArticleAttributes, ArticleUpdateAttributes } from "../../interfaces/article.interface";
-import { ResponseAttributes, ResponseResultsArray, ResponseResultsOneObject } from "../../interfaces/response.interface";
+import {
+  ResponseAttributes,
+  ResponseResultsPagination,
+  ResponseResultsOneObject
+} from "../../interfaces/response.interface";
 import { ArticleModel, UserModel } from "../index";
 import { CustomError } from "../../helpers/customError.helpers";
 
@@ -23,7 +27,7 @@ export const getArticles = async (
   order:string = "ASC",
   offset:string|number = 1,
   search:string = "",
-): Promise<ResponseResultsArray<ArticleModel>> => {
+): Promise<ResponseResultsPagination<ArticleModel>> => {
 
   const where = {
     [Op.and]: [
@@ -37,7 +41,7 @@ export const getArticles = async (
     ]
   };
 
-  const articles = await ArticleModel.findAll( {
+  const { rows, count }  = await ArticleModel.findAndCountAll( {
     attributes: [
       "id",
       "title",
@@ -65,7 +69,9 @@ export const getArticles = async (
   } );
 
   return {
-    results: articles,
+    results: rows,
+    totalItems: count,
+    totalPages: Math.ceil( count / 20 ),
     code: 200
   };
 };

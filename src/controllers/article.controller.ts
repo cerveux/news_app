@@ -24,9 +24,9 @@ export const postArticle = async ( req: ArticleRequest, res: Response ): Promise
 export const getArticles = async ( req: ArticlePaginationRequest, res: Response ): Promise<void> => {
   const { order, page, search } = req.query;
 
-  const { results, code } = await ArticleMethods.getArticles( order, page, search );
+  const { results, code, totalItems, totalPages } = await ArticleMethods.getArticles( order, page, search );
 
-  res.status( code ).json( results );
+  res.status( code ).json( { totalItems, totalPages, results } );
 };
 
 export const getArticleById = async ( req: ArticleRequest, res: Response ): Promise<void> => {
