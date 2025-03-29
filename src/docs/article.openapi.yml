@@ -1,0 +1,458 @@
+openapi: '3.0.0'
+info:
+  title: Article API
+  version: 1.0.0
+  description: API for managing articles
+paths:
+  /article:
+    post:
+      summary: Create a new article
+      tags:
+        - Article
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - body
+              properties:
+                title:
+                  type: string
+                  description: The title of the article
+                  example: "Understanding Node.js"
+                body:
+                  type: string
+                  description: The body content of the article
+                  example: "In this article, we explore the fundamentals of Node.js."
+                image_url:
+                  type: string
+                  description: The URL of the article's image
+                  example: "http://example.com/article-image.jpg"
+      responses:
+        '201':
+          description: Article created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "New Article created successfully with id 1."
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                Required Fields:
+                  summary: This fields are required
+                  value:
+                    errors:
+                      -  
+                        type: "field"
+                        msg: "The title is required."
+                        path: "title"
+                        location: "body"
+                      -  
+                        type: "field"
+                        msg: "The body is required."
+                        path: "body"
+                        location: "body"
+                commonValidations:
+                  summary: Common validations
+                  value:
+                    errors:
+                      -
+                        type: "field"
+                        value: "************************************************************"
+                        msg: "One of the special characters entered is not allowed. \nOnly /  , . ( ) and : are allowed."
+                        path: "title"
+                        location: "body"
+                      -
+                        type: "field"
+                        value: "************************************************************"
+                        msg: "Invalid value"
+                        path: "title"
+                        location: "body"
+                      -
+                        type: "field"
+                        value: "**"
+                        msg: "One of the special characters entered is not allowed. \nOnly / * + - _ , . () and : are allowed."
+                        path: "body"
+                        location: "body"
+                      -
+                        type: "field"
+                        value: "pepe"
+                        msg: "The image URL is not valid."
+                        path: "image_url"
+                        location: "body"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                InvalidToken:
+                  summary: Invalid token
+                  value:
+                    message: "Invalid Token. Please login again."
+                NoToken:
+                  summary: No token provided
+                  value:
+                    message: "The JWT is required."
+    get:
+      summary: Get all articles
+      tags:
+        - Article
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+            example: 1
+        - name: order
+          in: query
+          description: Order of the articles (ASC or DESC)
+          required: false
+          schema:
+            type: string
+            enum: [ASC, DESC]
+            example: ASC
+        - name: search
+          in: query
+          description: Search term for filtering articles
+          required: false
+          schema:
+            type: string
+            example: "Node.js"
+      responses:
+        '200':
+          description: List of articles
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  totalItems: 20830
+                  totalPages: 2083
+                  results:
+                    - 
+                      id: 1
+                      title: "Article 1"
+                      body: "This is the body of article 1"
+                      image_url: "https://example.com/image1.jpg"
+                      date: "2025-03-28"
+                      author:
+                        id: 1
+                        name: "John"
+                        lastname: "Doe"
+                    -
+                      id: 2
+                      title: "Article 2"
+                      body: "This is the body of article 2"
+                      image_url: "https://example.com/image2.jpg"
+                      date: "2025-03-28"
+                      author:
+                        id: 1
+                        name: "John"
+                        lastname: "Doe"
+                    -
+                      id: 3
+                      title: "Article 3"
+                      body: "This is the body of article 3"
+                      image_url: "https://example.com/image3.jpg"
+                      date: "2025-03-28"
+                      author:
+                        id: 1
+                        name: "John"
+                        lastname: "Doe"
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                Validation Error:
+                  summary: Format validation error
+                  value:
+                    errors:
+                      -  
+                        type: "field"
+                        value: "a"
+                        msg: "Page must be a number"
+                        path: "page"
+                        location: "query"
+                      -  
+                        type: "field"
+                        value: "ASX"
+                        msg: "No valid value was provided for the search, use ASC or DESC"
+                        path: "order"
+                        location: "query"
+  /article/{id}:
+    get:
+      summary: Get an article by ID
+      tags:
+        - Article
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the article
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Article found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  title:
+                    type: string
+                    example: "Understanding Node.js"
+                  body:
+                    type: string
+                    example: "In this article, we explore the fundamentals of Node.js."
+                  image_url:
+                    type: string
+                    example: "http://example.com/article-image.jpg"
+                  date:
+                    type: string
+                    example: "2025-03-28"
+                  down:
+                    type: boolean
+                    example: false
+                  author:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "John"
+                      lastname:
+                        type: string
+                        example: "Doe"
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                Id Error:
+                  summary: Id type validation
+                  value:
+                    errors:
+                      -  
+                        type: "field"
+                        value: "a"
+                        msg: "The id value must be a number."
+                        path: "id"
+                        location: "params"
+        '404':
+          description: Article not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "There is no Article registered with that id."
+
+    put:
+      summary: Update an article by ID
+      tags:
+        - Article
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the article
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: The updated title of the article
+                  example: "Understanding Node.js Updated"
+                body:
+                  type: string
+                  description: The updated body content of the article
+                  example: "Updated content about Node.js."
+                image_url:
+                  type: string
+                  description: The updated URL of the article's image
+                  example: "http://example.com/updated-article-image.jpg"
+      responses:
+        '200':
+          description: Article updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Article updated successfully."
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                commonValidations:
+                  summary: Common validations
+                  value:
+                    errors:
+                      -
+                        type: "field"
+                        value: "************************************************************"
+                        msg: "One of the special characters entered is not allowed. \nOnly /  , . ( ) and : are allowed."
+                        path: "title"
+                        location: "body"
+                      -
+                        type: "field"
+                        value: "************************************************************"
+                        msg: "The title must be between 1 and 50 characters."
+                        path: "title"
+                        location: "body"
+                      -
+                        type: "field"
+                        value: "**"
+                        msg: "One of the special characters entered is not allowed. \nOnly / * + - _ , . () and : are allowed."
+                        path: "body"
+                        location: "body"
+                      -
+                        type: "field"
+                        value: "pepe"
+                        msg: "The image URL is not valid."
+                        path: "image_url"
+                        location: "body"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                InvalidToken:
+                  summary: Invalid token
+                  value:
+                    message: "Invalid Token. Please login again."
+                NoToken:
+                  summary: No token provided
+                  value:
+                    message: "The JWT is required."
+        '404':
+          description: Article not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "There is no Article registered with that id."
+    delete:
+      summary: Delete an article by ID
+      tags:
+        - Article
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the article
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Article deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Article with id 1 deleted successfully."
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                Id Error:
+                  summary: Id type validation
+                  value:
+                    errors:
+                      -  
+                        type: "field"
+                        value: "a"
+                        msg: "The id value must be a number."
+                        path: "id"
+                        location: "params"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                InvalidToken:
+                  summary: Invalid token
+                  value:
+                    message: "Invalid Token. Please login again."
+                NoToken:
+                  summary: No token provided
+                  value:
+                    message: "The JWT is required."
+        '404':
+          description: Article not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "There is no Article registered with that id."
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

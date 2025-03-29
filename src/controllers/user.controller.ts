@@ -5,16 +5,13 @@ import {  UserAttributes, UserRequest } from "../interfaces/user.interface";
 import { UserMethods } from "../models/methods";
 import { CustomError } from "../helpers/customError.helpers";
 
-// import { CustomError } from "../helpers/customError.helpers";
-
 
 
 export const postUser = async ( req: UserRequest, res: Response ): Promise<void> => {
   const { username, password } = req.body;
 
-  const userExists = await UserMethods.getUserByUsername( username );
-  if ( userExists.results ){
-    throw new CustomError( "That username is already taken.", 400 );}
+  const { results } = await UserMethods.getUserByUsername( username );
+  if ( results ) throw new CustomError( "That username is already taken.", 400 );
 
   const salt = bcrypt.genSaltSync();
   const hashedPassword = await bcrypt.hash( password, salt );

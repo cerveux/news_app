@@ -16,3 +16,8 @@ export interface ResponseResultsPagination<T> extends ResponseResultsArray<T> {
     totalItems: number;
     totalPages: number;
   }
+
+export interface ResponseResultsPagination<T> extends ResponseResultsArray<T> {
+    totalItems: number;
+    totalPages: number;
+  }

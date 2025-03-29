@@ -1,8 +1,6 @@
-// import { CustomError } from "../../helpers/customError.helpers";
 import { UserAttributes } from "../../interfaces/user.interface";
 import { ResponseAttributes, ResponseResultsOneObject } from "../../interfaces/response.interface";
 import { UserModel } from "../index";
-
 
 
 /**
@@ -16,7 +14,7 @@ export const createUser = async ( user: UserAttributes ):Promise<ResponseAttribu
 };
 
 /**
- * Returns employee by username
+ * Returns user by username
  */
 export const getUserByUsername = async ( username: string ): Promise<ResponseResultsOneObject<UserModel | null> > => {
   const user = await UserModel.findOne( { where: { username } } );
