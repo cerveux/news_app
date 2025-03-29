@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - SECRET=Buenas Buenas esto es un secreto
+      - PORT=3000
+      - HOST_DATABASE=db
+      - NAME_DATABASE=mindfactory
+      - USER_DATABASE=mindfactory
+      - PASSWORD_DATABASE=mindfactory
+      - NODE_ENV=production
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - app-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: mindfactory
+      POSTGRES_PASSWORD: mindfactory
+      POSTGRES_DB: mindfactory
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mindfactory -d mindfactory"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - app-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+
+volumes:
+  pgdata:
+
+networks:
+  app-network:
+    driver: bridge
