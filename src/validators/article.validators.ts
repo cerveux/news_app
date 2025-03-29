@@ -4,9 +4,8 @@ import { validateErrors } from "../middlewares";
 
 
 const title: ValidationChain = body( "title" ).isAlphanumeric( "es-ES", { ignore: " ,.():" } )
-  .withMessage( "Only letters are allowed" ).trim().isLength( { min: 1, max: 50 } )
-  .withMessage( "One of the special characters entered is not allowed. \nOnly / * + - _ , . () and : are allowed." )
-  .optional( { nullable: true } ).escape();
+  .withMessage( "One of the special characters entered is not allowed. \nOnly /  , . ( ) and : are allowed." )
+  .trim().isLength( { min: 1, max: 50 } ).optional( { nullable: true } ).escape();
 const body_attribute: ValidationChain = body( "body" ).isAlphanumeric( "es-ES", { ignore: " /-_,.():+*" } )
   .withMessage( "One of the special characters entered is not allowed. \nOnly / * + - _ , . () and : are allowed." ).trim()
   .optional( { nullable: true } ).escape();
