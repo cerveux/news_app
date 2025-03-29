@@ -1,6 +1,5 @@
 import { Table, Column, Model, DataType, Index } from "sequelize-typescript";
 import { UserAttributes } from "../interfaces/user.interface";
-// import { GroupModel, SectionModel } from "./index";
 
 
 @Table( { tableName: "user" } )

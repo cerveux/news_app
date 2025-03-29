@@ -1,6 +1,6 @@
 import express, { Application } from "express";
 import morgan from "morgan";
-import { AuthRoute, UserRoute } from "./routes";
+import { ArticleRoute, AuthRoute, UserRoute } from "./routes";
 import { errorHandler } from "./middlewares/handlers.middleware";
 import swaggerDocs from "./config/swagger";
 import { config } from "./config/config";
@@ -18,6 +18,7 @@ app.use( morgan( "short" ) );
 
 
 // Routes
+app.use( "/api/article", ArticleRoute );
 app.use( "/api/auth", AuthRoute );
 app.use( "/api/user", UserRoute );
 

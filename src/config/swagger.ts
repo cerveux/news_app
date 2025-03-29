@@ -1,7 +1,6 @@
 import { Application } from "express";
 import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
-// import { access } from "../interfaces/auth.interface";
 import { config } from "./config";
 
 const options: swaggerJSDoc.Options = {

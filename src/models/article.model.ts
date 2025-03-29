@@ -26,14 +26,15 @@ class ArticleModel extends Model<ArticleAttributes> {
   declare body: string;
 
   @Column( {
-    type: DataType.STRING( 255 ),
+    type: DataType.STRING( 2083 ),
     allowNull: true
   } )
   declare image_url: string;
 
   @Column( {
     type: DataType.DATEONLY,
-    allowNull: true
+    allowNull: false,
+    defaultValue: DataType.NOW,
   } )
   declare date: Date;
 
@@ -45,6 +46,13 @@ class ArticleModel extends Model<ArticleAttributes> {
   declare user_id: number;
   @BelongsTo( () => UserModel, "user_id" )
     author?: UserModel;
+
+    @Column( {
+      type: DataType.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    } )
+  declare down: boolean;
 }
 
 export default ArticleModel;
